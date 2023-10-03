@@ -2,6 +2,7 @@ package com.example.presupuestos;
 
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -43,8 +44,47 @@ public class MainActivity extends AppCompatActivity {
         tvCurrentSaldo = findViewById(R.id.tvCurrentSaldo);
 
 
+        listViewProducts = findViewById(R.id.listViewProducts);
         productos = new ArrayList<>();
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, productos);
+        adapter = new ArrayAdapter<Producto>(this, R.layout.product_item, productos){
+            @Override
+            public View getView (final int position, View convertView, ViewGroup parent){
+                if (convertView == null){
+                    convertView = getLayoutInflater().inflate(R.layout.product_item, parent, false);
+                }
+
+                TextView textProductName = convertView.findViewById(R.id.textProductName);
+                TextView textProductPrice = convertView.findViewById(R.id.textProductPrice);
+                Button btnDeleteProduct = convertView.findViewById(R.id.btnDeleteProduct);
+
+                final Producto producto = productos.get(position);
+
+                textProductName.setText(producto.getNombre());
+                textProductPrice.setText("$" + producto.getPrecio());
+
+                btnDeleteProduct.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //Eliminar el producto de la lista
+                        productos.remove(position);
+                        adapter.notifyDataSetChanged();
+
+                        //Actualizar el saldo sumando el valor del producto eliminado
+
+                        currentSaldo += producto.getPrecio();
+                        tvCurrentSaldo.setText("Saldo: $" + currentSaldo);
+
+                        //Restar el valor del subtotal
+
+                        currentValue -=producto.getPrecio();
+                        tvCurrentValue.setText("Subtotal: $" + currentValue);
+                    }
+                });
+
+                return convertView;
+            }
+        };
+
         listViewProducts.setAdapter(adapter);
 
         btnAddProduct.setOnClickListener(new View.OnClickListener() {
