@@ -6,23 +6,28 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
-public class intro extends AppCompatActivity {
+import java.util.Timer;
+import java.util.TimerTask;
 
-    private static final long SPLASH_TIMEOUT = 3000;
+public class intro extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
 
-        new Handler().postDelayed(new Runnable() {
+        TimerTask tarea = new TimerTask() {
             @Override
             public void run() {
                 Intent intent = new Intent(intro.this, MainActivity.class);
                 startActivity(intent);
                 finish();
             }
+        };
 
-        }, SPLASH_TIMEOUT);
+        Timer tiempo = new Timer();
+        tiempo.schedule(tarea, 4000);
+
+
     }
 }
